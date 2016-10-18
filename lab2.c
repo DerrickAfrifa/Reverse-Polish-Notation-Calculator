@@ -7,7 +7,6 @@ int isOperator(char token, char operators[]){
 	for (int i = 0; i < 5; ++i){
 		if(token == operators[i]) return 1;
 	}
-	if(token == ' ') return 0;
 	return -1;
 }
 
@@ -48,7 +47,7 @@ int tokenise_ops(char str[], int start, char result[],char operators[]){
 	return -1;
 }
 
-void applyOperation(int num1, int num2, char operator, int * p){
+void applyOperation(float num1, float num2, char operator, float * p){
 	//printf("stack is at %c\n", stack);
 	switch(operator){
 		case '+':
@@ -63,70 +62,57 @@ void applyOperation(int num1, int num2, char operator, int * p){
 		case '/':
 			*p = num2 / num1;
 			break;
-		case '%':
+		/*case '%':
 			*p = num2 % num1;
-			break;				
+			break;*/
 	}
 }
 
 int main(){
-	int start;
+	int start = 0;
 	char result[256];
 	char operators[5] = "+-*/";
-	int stack[sizeof(int)*100];
-	int token;
+	float stack[sizeof(float)*100];
+	float token;
 	int stackPointer  = -1; 
-	int num1 = 0;
-	int num2 =0;
+	float num1 = 0;
+	float num2 = 0;
 	const int MAX_STRING = 256;
 	char buffer[MAX_STRING];
 	printf("> ");
 	fgets(buffer, MAX_STRING, stdin);
 
-	start = tokenise_ops(buffer, 0, result, operators);
-	token = atoi(result);
-
-	if(token == 0){  
-		  	if(result[0] == '\0') { 
-		  		//printf("evaluated to space.\n" );
-
-		  	}
-		  	else { //if it's operator
-		  		//printf("%c evaluated to an operation.\n", result[0]);
-		  		num1 = stack[stackPointer--];
-		  		num2 = stack[stackPointer];
-		 		//applyOperation(num1, num2, result[0], stack[stackPointer]);
-		  	}
-		}else{ //if it's number
-		  	//printf("%d evaluated to a number.\n", token);
-		  	stackPointer++;
-		  	stack[stackPointer] = token;
-		}
-
 	while ( start != -1 ) {
 	  start = tokenise_ops(buffer, start, result, operators);
-	  token = atoi(result);
-	
+	  token = atof(result);
+	  //printf("... %f\n",token );
+	  //printf("result is %s\n", result);	
+
 		if(token == 0){  
+			//printf("token %f was zero\n", token);
+			//printf("result is %s\n", result);
 		  	if(result[0] == '\0') { 
 		  		//printf("evaluated to space.\n" );
 
 		  	}
 		  	else { //if it's operator
-		  		int * p;
+		  		//printf("top stack is %f\n", stack[stackPointer]);
+		  		//printf("2nd last in stack is %f\n", stack[stackPointer-1]);
+		  		float * p;
 		  		//printf("%c evaluated to an operation.\n", result[0]);
 		  		num1 = stack[stackPointer--];
 		  		num2 = stack[stackPointer];
-		  		//printf("num1: %d, num2: %d\n", num1,num2);
+		  		//printf("num1: %f, num2: %f\n", num1,num2);
 		  		p = &stack[stackPointer];
 		 		applyOperation(num1, num2, result[0], p);
 		  	}
 		}else{ //if it's number
 		  	//printf("%d evaluated to a number.\n", token);
+			//printf("placing in stack %f\n", token);
 		  	stackPointer++;
 		  	stack[stackPointer] = token;
 		}
 	}
-	printf("> ans %d\n", stack[0]);
+	printf("> ans %f\n", stack[0]);
 	return 0;
 }
